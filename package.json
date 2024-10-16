@@ -1,0 +1,22 @@
+{
+  "name": "kaspad-checker",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Kaspad-checker is a tool that lets you easily check kaspad node working status.",
+  "main": "kaspad-checker.js",
+  "bin": "kaspad-checker.js",
+  "scripts": {
+    "start": "node kaspad-checker.js"
+  },
+  "author": "Serhii Kuianov",
+  "license": "ISC",
+  "dependencies": {
+    "bignumber.js": "^9.1.1",
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "dotenv": "^16.0.3",
+    "kaspajs": "github:GateKVite/Kaspajs",
+    "node-zabbix-sender": "^1.1.0"
+  },
+  "repository": "https://github.com/ku9nov/kaspad-checker"
+}
