@@ -1,0 +1,149 @@
+zabbix_export:
+  version: '6.0'
+  date: '2024-10-16T13:06:31Z'
+  groups:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    - uuid: 1c9be8924780437e81fa4ca863685d1b
+      template: 'Kaspa Node Monitoring'
+      name: 'Kaspa Node Monitoring'
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: 303ff56756a84ae28682a83b384dadab
+          name: 'Block count'
+          type: TRAP
+          key: kaspa.node.block_count
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 3e375b0d043e4aaebc2a84697eb4dfd6
+          name: 'Blue score'
+          type: TRAP
+          key: kaspa.node.blue_score
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 0ee4822e7d7d41cb898302075a363901
+          name: 'DAA score'
+          type: TRAP
+          key: kaspa.node.daa_score
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: c8929be6dc244df79e1138b47e076f52
+          name: Difficulty
+          type: TRAP
+          key: kaspa.node.difficulty
+          delay: '0'
+          history: 7d
+          trends: 7d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 05e1bca2d0f7418fbd2b256bb681a28a
+          name: Hashrate
+          type: TRAP
+          key: kaspa.node.hash_rate
+          delay: '0'
+          history: 7d
+          trends: 7d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 6e98ba30af0c4d77a29d547e709e1ffd
+          name: 'Header count'
+          type: TRAP
+          key: kaspa.node.header_count
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 113cb775ad614109873a060e0644d971
+          name: 'Mempool size'
+          type: TRAP
+          key: kaspa.node.mempool_size
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: f625900da6c74bd7b3b13bdda43d98c0
+          name: Peers
+          type: TRAP
+          key: kaspa.node.peers
+          delay: '0'
+          history: 7d
+          trends: 7d
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+        - uuid: 03209683d73a4ce696deed7cadba88dd
+          name: Synced
+          type: TRAP
+          key: kaspa.node.synced
+          delay: '0'
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+          triggers:
+            - uuid: 87528dbb83ea4d1ba18ff0d23b1a68e2
+              expression: 'find(/Kaspa Node Monitoring/kaspa.node.synced,#1,"like","true")=0 or nodata(/Kaspa Node Monitoring/kaspa.node.synced,15m)=1'
+              name: '{HOST.NAME} kaspad node is unsynced'
+              priority: HIGH
+        - uuid: 4c36baa2da40457fbbabded32de7cdb3
+          name: Version
+          type: TRAP
+          key: kaspa.node.version
+          delay: '0'
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Kaspa Node Checker'
+          triggers:
+            - uuid: 9463fb9667294ee48132aa480fa6b82a
+              expression: '(last(/Kaspa Node Monitoring/kaspa.node.version,#1)<>last(/Kaspa Node Monitoring/kaspa.node.version,#2))>0'
+              name: 'Version of kaspad was changed on {HOST.NAME}'
+              priority: INFO
+              manual_close: 'YES'
+  graphs:
+    - uuid: 2db7af4bca1444958b02ebfadfa2ea57
+      name: 'Block count'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'Kaspa Node Monitoring'
+            key: kaspa.node.block_count
+    - uuid: 021645ba63f547e4b1ebb619559efb85
+      name: Peers
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      graph_items:
+        - drawtype: FILLED_REGION
+          color: 199C0D
+          calc_fnc: MIN
+          item:
+            host: 'Kaspa Node Monitoring'
+            key: kaspa.node.peers
