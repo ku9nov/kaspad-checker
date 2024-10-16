@@ -109,7 +109,7 @@ async function safeRequest(rpc, method, defaultValue = {}) {
     try {
         return await rpc.request(method, {});
     } catch (e) {
-        console.log(`KasNodeMon encountered an error while fetching ${method}: ${JSON.stringify(e)}`);
+        console.log(`kaspad-checker encountered an error while fetching ${method}: ${JSON.stringify(e)}`);
         return defaultValue;
     }
 }
@@ -138,7 +138,7 @@ async function getNodeInfo(rpc) {
         }),
         safeRequest(rpc, 'getVirtualSelectedParentBlueScoreRequest', { blueScore: "Error" }),
         getNetworkHashrate(rpc).catch((e) => {
-            console.log(`KasNodeMon encountered an error while fetching network hashrate: ${JSON.stringify(e)}`);
+            console.log(`kaspad-checker encountered an error while fetching network hashrate: ${JSON.stringify(e)}`);
             return 0;
         })
     ]);
