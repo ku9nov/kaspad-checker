@@ -49,6 +49,6 @@ crontab -e
 Add a line to schedule the job. For example, to run it every 10 minutes:
 
 ```
-*/10 * * * * /path/to/node /path/to/kaspad-checker.js >> /path/to/logfile.log 2>&1
+*/10 * * * * cd /path/to && /path/to/node kaspad-checker.js >> logfile.log 2>&1
 ```
-Replace `/path/to/node` with the path to your Node.js binary, and `/path/to/kaspad-checker.js` with the path to your script. Redirecting output to a log file helps in troubleshooting.
+Replace `/path/to/node` with the path to your Node.js binary, and `/path/to` with the path to your folder. Redirecting output to a log file helps in troubleshooting.
