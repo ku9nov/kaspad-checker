@@ -1,0 +1,96 @@
+zabbix_export:
+  version: '6.0'
+  date: '2024-10-18T10:50:48Z'
+  groups:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    - uuid: 94a48801fe604f6d82af33463acabd2c
+      template: 'Kaspa API Monitoring'
+      name: 'Kaspa API Monitoring'
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: 171b469880244296b36c445dccc4b106
+          name: 'Kaspad Servers Health'
+          type: HTTP_AGENT
+          key: kaspad.health.discovery
+          history: 1d
+          trends: '0'
+          value_type: TEXT
+          url: '{$API_HOST}/info/health'
+          allow_traps: 'YES'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+          tags:
+            - tag: Web
+              value: API
+      discovery_rules:
+        - uuid: 9f5fa45b4d0343ce91a90eaf88e9e116
+          name: 'Kaspad Servers Discovery'
+          type: HTTP_AGENT
+          key: kaspad.discovery
+          lifetime: 0m
+          item_prototypes:
+            - uuid: 2e1041e528c9403fa5763976e0e6bcf4
+              name: 'Kaspad {#KASPAD_HOST} Sync Status'
+              type: DEPENDENT
+              key: 'kaspad.sync.status[{#KASPAD_HOST}]'
+              delay: '0'
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.kaspadServers[?(@.kaspadHost=="{#KASPAD_HOST}")].isSynced'
+              master_item:
+                key: kaspad.health.discovery
+              tags:
+                - tag: Web
+                  value: API
+              trigger_prototypes:
+                - uuid: 27419fec70f44a43a40543a006c34d4c
+                  expression: 'find(/Kaspa API Monitoring/kaspad.sync.status[{#KASPAD_HOST}],#1,"like","[true]")=0 or nodata(/Kaspa API Monitoring/kaspad.sync.status[{#KASPAD_HOST}],15m)=1'
+                  name: 'Kaspad {#KASPAD_HOST} Sync Status'
+                  priority: HIGH
+            - uuid: 23a4792528394d11b57d363df9851208
+              name: 'Kaspad {#KASPAD_HOST} UTXO Indexing Status'
+              type: DEPENDENT
+              key: 'kaspad.utxo.indexed.status[{#KASPAD_HOST}]'
+              delay: '0'
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.kaspadServers[?(@.kaspadHost=="{#KASPAD_HOST}")].isUtxoIndexed'
+              master_item:
+                key: kaspad.health.discovery
+              tags:
+                - tag: Web
+                  value: API
+              trigger_prototypes:
+                - uuid: 25e457b1e520497ca3c974861534cd86
+                  expression: 'find(/Kaspa API Monitoring/kaspad.utxo.indexed.status[{#KASPAD_HOST}],#1,"like","[true]")=0 or nodata(/Kaspa API Monitoring/kaspad.utxo.indexed.status[{#KASPAD_HOST}],15m)=1'
+                  name: 'Kaspad {#KASPAD_HOST} UTXO Indexing Status'
+                  priority: HIGH
+          url: '{$API_HOST}/info/health'
+          lld_macro_paths:
+            - lld_macro: '{#ISSYNCED}'
+              path: $.isSynced
+            - lld_macro: '{#ISUTXOINDEXED}'
+              path: $.isUtxoIndexed
+            - lld_macro: '{#KASPAD_HOST}'
+              path: $.kaspadHost
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.kaspadServers[*]'
+      tags:
+        - tag: Application
+          value: 'Kaspa API'
+      macros:
+        - macro: '{$API_HOST}'
+          value: 'http://localhost:8000'
