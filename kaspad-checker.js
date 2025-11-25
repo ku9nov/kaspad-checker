@@ -71,7 +71,7 @@ class CheckStatus {
                         { key: 'kaspa.node.header_count', label: 'Header count', value: ni.headerCount, format: (v) => numberFormatter.format(v) },
                         { key: 'kaspa.node.daa_score', label: 'DAA score', value: ni.daaScore, format: (v) => numberFormatter.format(v) },
                         { key: 'kaspa.node.difficulty', label: 'Difficulty', value: ni.difficulty, format: (v) => numberFormatter.format(v) },
-                        { key: 'kaspa.node.hash_rate', label: 'Hashrate', value: new BigNumber(ni.hashRate).shiftedBy(-12).toFixed(2), format: (v) => `${v} TH/s` },
+                        { key: 'kaspa.node.hash_rate', label: 'Hashrate', value: ni.hashRate > 0 ? new BigNumber(ni.hashRate).shiftedBy(-6).toFixed(2) : '0.00', format: (v) => `${v} TH/s` },
                         { key: 'kaspa.node.blue_score', label: 'Blue score', value: ni.blueScore, format: (v) => numberFormatter.format(v) }
                     ];
                     
@@ -163,8 +163,21 @@ async function getNodeInfo(rpc) {
 
 
 async function getNetworkHashrate(rpc) {
-    const info = await rpc.request('estimateNetworkHashesPerSecondRequest', {windowSize: 2500});
-    return info.networkHashesPerSecond;
+    try {
+
+        const info = await rpc.request('estimateNetworkHashesPerSecondRequest', {windowSize: 10000});
+        
+        const hashrate = info.networkHashesPerSecond || info.networkHashesPerSecond === 0 
+            ? info.networkHashesPerSecond 
+            : 0;
+
+        const hashrateNumber = typeof hashrate === 'string' ? parseFloat(hashrate) : hashrate;
+                
+        return hashrateNumber || 0;
+    } catch (e) {
+        console.log(`Error in getNetworkHashrate: ${JSON.stringify(e)}`);
+        throw e;
+    }
 }
 
 export const numberFormatter = new Intl.NumberFormat('en-US');
