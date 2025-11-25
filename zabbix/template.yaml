@@ -1,6 +1,6 @@
 zabbix_export:
   version: '6.0'
-  date: '2024-10-16T13:06:31Z'
+  date: '2025-11-25T13:20:24Z'
   groups:
     - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
       name: Templates/Applications
@@ -63,6 +63,11 @@ zabbix_export:
           tags:
             - tag: Application
               value: 'Kaspa Node Checker'
+          triggers:
+            - uuid: baa393417c7947e7be35adff242c03ed
+              expression: 'last(/Kaspa Node Monitoring/kaspa.node.hash_rate,#3)<2'
+              name: 'Node hashrate < 2'
+              priority: HIGH
         - uuid: 6e98ba30af0c4d77a29d547e709e1ffd
           name: 'Header count'
           type: TRAP
@@ -126,6 +131,9 @@ zabbix_export:
               name: 'Version of kaspad was changed on {HOST.NAME}'
               priority: INFO
               manual_close: 'YES'
+      tags:
+        - tag: Application
+          value: 'Kaspad Node'
   graphs:
     - uuid: 2db7af4bca1444958b02ebfadfa2ea57
       name: 'Block count'
